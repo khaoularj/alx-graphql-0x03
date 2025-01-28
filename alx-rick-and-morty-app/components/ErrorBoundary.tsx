@@ -1,5 +1,6 @@
 import React from "react";
 import { ReactNode } from "react";
+import * as Sentry from '@sentry/react';
 
 interface State {
     hasError: boolean;
@@ -21,8 +22,11 @@ interface State {
     }
   
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-      console.log({ error, errorInfo });
-    }
+        const extra = {
+          componentStack: errorInfo.componentStack,
+        };
+        Sentry.captureException(error, { extra });
+      }
   
     render() {
       if (this.state.hasError) {
